@@ -3,10 +3,19 @@ const path = require('path');
 const fs = require('fs');
 const app = express();
 const datalogic = require('./datalogic');
+const https = require('https');
+const http = require('http');
+
 const pathname = path.join(__dirname, './iprecord');
 
-const httpport = process.env.port || 8000;
-const httpsport = process.env.port || 4430;
+const httpPort = process.env.port || 8000;
+const httpsPort = process.env.port || 4430;
+// const SSLData = {
+//     key : fs.readFileSync('./.config/private.key'),
+//     cert : fs.readFileSync('./.config/certificate.crt')
+// }
+const httpServer = http.createServer(app);
+// const httpsServer = https.createServer(SSLData, app);
 
 app.use((req, res, next) => {
 
@@ -15,7 +24,7 @@ app.use((req, res, next) => {
     const currentTimeStampFileName = date.getTime()
     const currentTimeStamp = date.toLocaleString();
     const ip = req.ip;
-    const data = " your server is running at following ip -: " + ip + " " + "at" + " " + currentTimeStamp;
+    const data = " your server is running at following ip -: " + ip + " " + "at" + " " + currentTimeStamp + "\n";
     // read all files iprecord folder
     fs.readdir(pathname, (err, files) => {
 
@@ -69,6 +78,9 @@ app.use((req, res, next) => {
 })
 
 
-app.listen(httpport, () => {
-    console.log(`Server is start running at ${httpport}`)
-})
+httpServer.listen(httpPort, () => {
+    console.log(`App Started at http://localhost:${httpPort}`);
+});
+// httpsServer.listen(httpsPort, () => {
+//     console.log(`App Started at https://localhost:${httpsPort}`);
+// })
